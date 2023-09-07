@@ -1,0 +1,18 @@
+- name: install auditbeat and filebeat
+  hosts: vulnerable
+  become: true
+  tasks:
+    - name: Install auditbeat
+      ansible.builtin.shell: |
+        curl -L -O https://artifacts.elastic.co/downloads/beats/auditbeat/auditbeat-8.4.3-amd64.deb
+        sudo dpkg -i auditbeat-8.4.3-amd64.deb
+
+    - name: CP auditbeat config
+      ansible.builtin.copy:
+        src: ./templates/auditbeat.yml
+        dest: /etc/auditbeat/auditbeat.yml
+
+    - name: Run auditbeat
+      ansible.builtin.shell: |
+        auditbeat setup --index-management
+        service auditbeat start

